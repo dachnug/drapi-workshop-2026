@@ -1,0 +1,33 @@
+<span class="timing">14:30 – 14:55 · <span class="type-lecture">Vortrag &amp; Demo</span></span>
+
+<p class="eyebrow">Block 6</p>
+
+## From username/password to OAuth
+
+Why basic auth doesn't scale - and the CORS trap. <!-- .element: style="color:var(--muted)" -->
+
+--
+
+### The bearer-token flow
+
+```bash
+# 1. Exchange credentials for a token (once)
+curl -X POST https://YOUR-HOST/api/v1/auth \
+  -H "Content-Type: application/json" \
+  -d '{"username":"...","password":"..."}'
+# → { "bearer": "eyJ..." }
+
+# 2. Use the token on every call
+curl https://YOUR-HOST/api/v1/document?dataSource=demo \
+  -H "Authorization: Bearer eyJ..."
+```
+
+--
+
+### CORS - the browser trap
+
+**Cross-Origin Resource Sharing.** The browser decides which pages may call your API.
+
+Symptom: works in curl &amp; Bruno, fails in the browser. The commonest "why is my app broken" moment - and you'll meet it today. <!-- .element: style="margin-top:1em; color:var(--muted)" -->
+
+<p class="demo-slot"><b>DEMO SLOT:</b> trigger a CORS error live, then show the fix in DRAPI config.</p>

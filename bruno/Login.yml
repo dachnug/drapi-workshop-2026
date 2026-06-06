@@ -1,0 +1,51 @@
+info:
+  name: Login
+  type: http
+  seq: 2
+
+http:
+  method: POST
+  url: "{{HOST}}/api/v1/auth"
+  body:
+    type: json
+    data: |-
+      {
+        "username" : "{{UserName}}",
+        "password" : "{{Password}}"
+      }
+  auth: inherit
+
+runtime:
+  assertions:
+    - expression: res.status
+      operator: eq
+      value: "200"
+    - expression: res.body
+      operator: isJson
+    - expression: res.body.bearer
+      operator: isString
+    - expression: res.body.bearer
+      operator: isNotEmpty
+  actions:
+    - type: set-variable
+      phase: after-response
+      selector:
+        expression: res.body.bearer
+        method: jsonq
+      variable:
+        name: BEARER
+        scope: runtime
+    - type: set-variable
+      phase: after-response
+      selector:
+        expression: res.body.claims
+        method: jsonq
+      variable:
+        name: CLAIMS
+        scope: runtime
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: false
+  maxRedirects: 5

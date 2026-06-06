@@ -1,0 +1,28 @@
+info:
+  name: API list
+  type: http
+  seq: 1
+
+http:
+  method: GET
+  url: "{{HOST}}/api"
+  auth: inherit
+
+runtime:
+  assertions:
+    - expression: res.status
+      operator: eq
+      value: "200"
+    - expression: res.body
+      operator: isJson
+    - expression: res.body.basis
+      operator: isJson
+    - expression: res.body.basis.name
+      operator: eq
+      value: basis
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

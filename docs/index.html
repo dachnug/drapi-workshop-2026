@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>DRAPI Developer Workshop</title>
+
+    <link rel="stylesheet" href="vendor/reveal/reveal.min.css" />
+    <link rel="stylesheet" href="vendor/reveal/theme/black.min.css" id="theme" />
+    <link rel="stylesheet" href="vendor/reveal/highlight-styles/atom-one-dark.min.css" />
+
+    <!-- Fonts: distinctive, not the usual suspects (vendored for offline use) -->
+    <link rel="stylesheet" href="vendor/fonts/fonts.css" />
+
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="reveal">
+      <div class="slides">
+        <section data-markdown="slides/00-title.md"></section>
+        <section data-markdown="slides/01-agenda.md" data-separator-vertical="^--$"></section>
+        <section data-markdown="slides/02-opening.md" data-separator-vertical="^--$"></section>
+        <section data-markdown="slides/03-tools.md" data-separator-vertical="^--$"></section>
+        <section data-markdown="slides/04-openapi.md" data-separator-vertical="^--$"></section>
+        <section data-markdown="slides/05a-scaffold.md" data-separator-vertical="^--$"></section>
+        <section data-markdown="slides/05b-login.md" data-separator-vertical="^--$"></section>
+        <section data-markdown="slides/06-product-list.md" data-separator-vertical="^--$"></section>
+        <section data-markdown="slides/07-oauth.md" data-separator-vertical="^--$"></section>
+        <section data-markdown="slides/08-oauth-exercise.md" data-separator-vertical="^--$"></section>
+        <section data-markdown="slides/09-large-data.md" data-separator-vertical="^--$"></section>
+        <section data-markdown="slides/10-long-list.md" data-separator-vertical="^--$"></section>
+        <section data-markdown="slides/11-multi-value.md" data-separator-vertical="^--$"></section>
+        <section data-markdown="slides/12-forms-views.md" data-separator-vertical="^--$"></section>
+        <section data-markdown="slides/13-deployment.md" data-separator-vertical="^--$"></section>
+        <section data-markdown="slides/14-ama.md" data-separator-vertical="^--$"></section>
+        <section data-markdown="slides/15-close.md" data-separator-vertical="^--$"></section>
+      </div>
+    </div>
+
+    <div class="footer">DRAPI Workshop · ↔ navigate · S speaker notes · F fullscreen</div>
+
+    <script src="vendor/reveal/reveal.min.js"></script>
+    <script src="vendor/reveal/plugin/markdown/markdown.min.js"></script>
+    <script src="vendor/reveal/plugin/highlight/highlight.min.js"></script>
+    <script src="vendor/reveal/plugin/notes/notes.min.js"></script>
+    <script>
+      Reveal.initialize({
+        hash: true,
+        slideNumber: 'c/t',
+        transition: 'fade',
+        transitionSpeed: 'fast',
+        controls: true,
+        progress: true,
+        center: false,
+        plugins: [RevealMarkdown, RevealHighlight, RevealNotes]
+      });
+    </script>
+  </body>
+</html>

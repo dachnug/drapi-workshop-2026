@@ -1,0 +1,39 @@
+info:
+  name: List views
+  type: http
+  seq: 2
+
+http:
+  method: GET
+  url: "{{HOST}}/api/v1/lists?dataSource=approvals"
+  headers:
+    - name: Authorization
+      value: Bearer {{BEARER}}
+  params:
+    - name: dataSource
+      value: approvals
+      type: query
+  auth: inherit
+
+runtime:
+  assertions:
+    - expression: res.status
+      operator: eq
+      value: "200"
+    - expression: res.body
+      operator: isArray
+  actions:
+    - type: set-variable
+      phase: after-response
+      selector:
+        expression: res.body[0].unid
+        method: jsonq
+      variable:
+        name: VIEWNAME
+        scope: runtime
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

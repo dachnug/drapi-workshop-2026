@@ -1,0 +1,26 @@
+{
+  "name": "dachnug-2026",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "test:coverage:ci": "vitest run --coverage --reporter=dot"
+  },
+  "dependencies": {
+    "@awesome.me/webawesome": "^3.7.0",
+    "lit": "^3.3.2"
+  },
+  "devDependencies": {
+    "@vitest/coverage-v8": "^4.1.8",
+    "jsdom": "^29.1.1",
+    "typescript": "~6.0.2",
+    "vite": "^8.0.12",
+    "vitest": "^4.1.8"
+  }
+}
