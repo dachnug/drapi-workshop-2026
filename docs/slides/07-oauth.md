@@ -8,7 +8,7 @@ Why basic auth doesn't scale - and the CORS trap. <!-- .element: style="color:va
 
 --
 
-### The bearer-token flow
+### The bearer-token flow with simple login
 
 ```bash
 # 1. Exchange credentials for a token (once)
@@ -21,6 +21,16 @@ curl -X POST https://YOUR-HOST/api/v1/auth \
 curl https://YOUR-HOST/api/v1/document?dataSource=demo \
   -H "Authorization: Bearer eyJ..."
 ```
+
+--
+
+### OAuth (PKCE version) to obtain a bearer
+
+- find IdPs [IdP list (Port 8889)](https://keep.dnug.rocks:8889/idp)
+- read .well-known
+- start the dance
+
+![IdP, SP, Resource](./OIDC.png)
 
 --
 

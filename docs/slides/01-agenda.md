@@ -5,9 +5,10 @@
 <div class="agenda">
   <p><span class="t">13:00</span> Opening - from Notes to the web</p>
   <p><span class="t">13:15</span> Tools of the trade</p>
-  <p><span class="t">13:30</span> OpenAPI &amp; SwaggerUI</p>
-  <p><span class="t">13:40</span> A simple customer list - demo</p>
-  <p><span class="t">13:50</span> Product list - exercise</p>
+  <p><span class="t">13:30</span> OpenAPI &amp; SwaggerUI </p>
+  <p><span class="t">13:35</span> Scaffolding & Debug </p>
+  <p><span class="t">13:40</span> Fighting with login</p>
+  <p><span class="t">13:50</span> Exercise</p>
   <p><span class="t">14:15</span> ☕ Break</p>
 </div>
 

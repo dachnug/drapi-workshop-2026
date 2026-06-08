@@ -4,7 +4,7 @@
 
 ## Let's get physical
 
-<p class="demo-slot"><b>DEMO SLOT:</b>Bauzaun mit vite errichten</p>
+<p class="demo-slot"><b>DEMO SLOT:</b>Baugerüst mit vite errichten</p>
 
 --
 
@@ -15,6 +15,34 @@ npm create vite@latest
 ![Vite create](vitecreate.png)
 
 ## [OPEN in browser](http://localhost:5173/)
+
+--
+
+<p class="eyebrow">Debug votbereiten</p>
+
+`.vscode/launch.json`
+
+```json
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "chrome",
+      "request": "launch",
+      "name": "Launch Chrome against localhost",
+      "url": "http://localhost:5173",
+      "webRoot": "${workspaceFolder}"
+    },
+    {
+      "name": "Attach to Chrome",
+      "port": 9222,
+      "request": "attach",
+      "type": "chrome",
+      "webRoot": "${workspaceFolder}"
+    }
+  ]
+}
+```
 
 --
 
