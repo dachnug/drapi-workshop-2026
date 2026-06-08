@@ -1,0 +1,44 @@
+info:
+  name: Make a DB
+  type: http
+  seq: 1
+
+http:
+  method: POST
+  url: "{{HOST}}/api/setup-v1/design/nsf"
+  headers:
+    - name: Authorization
+      value: Bearer {{BEARER}}
+  body:
+    type: json
+    data: |-
+      {
+        "nsfPath": "samples/{{$randomAbbreviation}}.nsf",
+        "title": "Sample Db {{$isoTimestamp}}"
+      }
+  auth: inherit
+
+runtime:
+  assertions:
+    - expression: res.status
+      operator: eq
+      value: "200"
+    - expression: res.body
+      operator: isJson
+    - expression: res.body.nsfPath
+      operator: isString
+  actions:
+    - type: set-variable
+      phase: after-response
+      selector:
+        expression: res.body.nsfPath
+        method: jsonq
+      variable:
+        name: NSFPATH
+        scope: runtime
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

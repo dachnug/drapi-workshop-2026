@@ -341,6 +341,30 @@ export const keepFetch = async (input: RequestInfo | URL, init: RequestInit = {}
   }
 };
 
+/**
+ * Performs an authenticated `fetch` and returns the raw, ok-checked `Response`
+ * without consuming its body.
+ *
+ * This is the transport primitive behind {@link keepFetch}: it resolves a bearer
+ * token via {@link getOrFetchToken} (refreshing or prompting for login per
+ * `reprompt`), attaches it as an `Authorization` header, issues the request, and
+ * verifies the response is ok. The body is left unread so callers can stream it
+ * (e.g. {@link import('./customerdata').streamCustomers}) or parse it themselves;
+ * {@link keepFetch} is the convenience wrapper that parses JSON/text.
+ *
+ * Authentication and error semantics match {@link keepFetch}: a missing session
+ * (with `reprompt=false` or a dismissed dialog) throws `Error('Authentication
+ * required')`, a non-ok HTTP response throws `Error('Request failed: <status>
+ * <statusText>')`, and fetch/network errors propagate unchanged. All failures
+ * are logged before being re-thrown.
+ *
+ * @param input - The resource to fetch (same as `fetch`).
+ * @param init - Request options (same as `fetch`); not mutated.
+ * @param reprompt - When true, may show the login dialog to authenticate.
+ * @returns A promise resolving to the ok `Response`, with its body unconsumed.
+ * @throws {Error} When authentication is required, the response is not ok, or
+ *   the fetch fails.
+ */
 export const fetchKeepResponse = async (
   input: RequestInfo | URL,
   init: RequestInit = {},

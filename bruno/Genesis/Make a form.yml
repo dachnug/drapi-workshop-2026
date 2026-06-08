@@ -1,0 +1,60 @@
+info:
+  name: Make a form
+  type: http
+  seq: 2
+
+http:
+  method: PUT
+  url: "{{HOST}}/api/setup-v1/design/forms/Stuff?nsfPath={{NSFPATH}}"
+  headers:
+    - name: Authorization
+      value: Bearer {{BEARER}}
+  params:
+    - name: nsfPath
+      value: "{{NSFPATH}}"
+      type: query
+  body:
+    type: json
+    data: |-
+      {
+        "name" : "Stuff",
+        "alias": "Sachen",
+        "fields": [
+          {
+            "allowmultivalues": false,
+            "name": "color",
+            "type": "text"
+          },
+          {
+            "allowmultivalues": false,
+            "name": "taste",
+            "type": "text"
+          },
+          {
+            "allowmultivalues": true,
+            "name": "shape",
+            "type": "text"
+          }
+        ]
+      }
+  auth: inherit
+
+runtime:
+  assertions:
+    - expression: res.status
+      operator: eq
+      value: "200"
+    - expression: res.body
+      operator: isJson
+    - expression: res.body.success
+      operator: eq
+      value: "true"
+    - expression: res.body.type
+      operator: eq
+      value: form
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

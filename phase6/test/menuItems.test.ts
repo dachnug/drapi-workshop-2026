@@ -9,7 +9,8 @@ vi.mock('../src/utils', () => ({
 }));
 vi.mock('../src/customerdata', () => ({
   fetchCustomers: vi.fn(),
-  reset: vi.fn()
+  reset: vi.fn(),
+  streamCustomers: vi.fn()
 }));
 vi.mock('../src/auth', () => ({
   keepFetch: vi.fn()
@@ -18,7 +19,7 @@ vi.mock('../src/auth', () => ({
 import '../src/components/dnug-datagrid';
 import type { DnugDatagrid } from '../src/components/dnug-datagrid';
 import { keepFetch } from '../src/auth';
-import { fetchCustomers, reset } from '../src/customerdata';
+import { fetchCustomers, reset, streamCustomers } from '../src/customerdata';
 import { wireUpMainMenu } from '../src/menuItems';
 import { replaceMainContent } from '../src/utils';
 
@@ -39,7 +40,7 @@ const lastRendered = (): HTMLElement => {
 describe('wireUpMainMenu', () => {
   beforeEach(() => {
     document.body.innerHTML =
-      '<ul><li id="apilist">List APIs</li><li id="userinfo"></li><li id="clickonly"></li><li id="customerlist"></li><li id="customerreset"></li><li id="customerappend"></li></ul>';
+      '<ul><li id="apilist">List APIs</li><li id="userinfo"></li><li id="clickonly"></li><li id="customerlist"></li><li id="customerreset"></li><li id="customerappend"></li><li id="allcustomers"></li><li id="streamingcustomers"></li></ul>';
     vi.restoreAllMocks();
     vi.spyOn(console, 'log').mockImplementation(() => {});
     vi.spyOn(console, 'error').mockImplementation(() => {});
@@ -160,6 +161,81 @@ describe('wireUpMainMenu', () => {
     const grid = renderedAt(0) as DnugDatagrid;
     expect(grid.tagName.toLowerCase()).toBe('dnug-datagrid');
     expect(grid.data).toEqual(rows);
+  });
+
+  it('customerappend: renders an error when the body is not an array', async () => {
+    vi.mocked(fetchCustomers).mockResolvedValue({});
+
+    wireUpMainMenu();
+    document.getElementById('customerappend')?.dispatchEvent(new Event('click'));
+    await flushPromises();
+
+    const node = lastRendered();
+    expect(node.tagName).toBe('PRE');
+    expect(node.textContent).toContain('Unexpected data format');
+  });
+
+  it('customerappend: renders an error when the fetch rejects', async () => {
+    vi.mocked(fetchCustomers).mockRejectedValue(new Error('boom'));
+
+    wireUpMainMenu();
+    document.getElementById('customerappend')?.dispatchEvent(new Event('click'));
+    await flushPromises();
+
+    const node = lastRendered();
+    expect(node.tagName).toBe('PRE');
+    expect(node.textContent).toContain('Error fetching customer list');
+  });
+
+  it('allcustomers: fetches a large page and appends the rows to the datagrid', async () => {
+    const rows = [{ id: 1 }, { id: 2 }];
+    vi.mocked(fetchCustomers).mockResolvedValue(rows);
+
+    wireUpMainMenu();
+    document.getElementById('allcustomers')?.dispatchEvent(new Event('click'));
+    await flushPromises();
+
+    expect(fetchCustomers).toHaveBeenCalledWith(10000);
+    const grid = renderedAt(0) as DnugDatagrid;
+    expect(grid.tagName.toLowerCase()).toBe('dnug-datagrid');
+    expect(grid.data).toEqual(rows);
+  });
+
+  it('allcustomers: renders an error when the body is not an array', async () => {
+    vi.mocked(fetchCustomers).mockResolvedValue({});
+
+    wireUpMainMenu();
+    document.getElementById('allcustomers')?.dispatchEvent(new Event('click'));
+    await flushPromises();
+
+    const node = lastRendered();
+    expect(node.tagName).toBe('PRE');
+    expect(node.textContent).toContain('Unexpected data format');
+  });
+
+  it('allcustomers: renders an error when the fetch rejects', async () => {
+    vi.mocked(fetchCustomers).mockRejectedValue(new Error('boom'));
+
+    wireUpMainMenu();
+    document.getElementById('allcustomers')?.dispatchEvent(new Event('click'));
+    await flushPromises();
+
+    const node = lastRendered();
+    expect(node.tagName).toBe('PRE');
+    expect(node.textContent).toContain('Error fetching customer list');
+  });
+
+  it('streamingcustomers: delegates the datagrid to streamCustomers', async () => {
+    vi.mocked(streamCustomers).mockResolvedValue(undefined);
+
+    wireUpMainMenu();
+    document.getElementById('streamingcustomers')?.dispatchEvent(new Event('click'));
+    await flushPromises();
+
+    expect(streamCustomers).toHaveBeenCalledTimes(1);
+    const grid = vi.mocked(streamCustomers).mock.calls[0][0] as DnugDatagrid;
+    expect(grid.tagName).toBe('DNUG-DATAGRID');
+    expect(renderedAt(0)).toBe(grid);
   });
 
   it('customerreset: resets the cursor and renders a confirmation', () => {

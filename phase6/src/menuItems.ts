@@ -4,12 +4,13 @@
 
 /**
  * @fileoverview Wires up the application's main menu interactions and the
- * data fetching that backs them. Attaches click handlers for six menu
+ * data fetching that backs them. Attaches click handlers for eight menu
  * actions: "API list" (renders the backend REST endpoints), "User info"
  * (renders the authenticated user's details), a "click-only" demo item (a
  * default no-op that logs a warning), and the customer actions "Customer
- * list", "Customer append", and "Customer reset" that drive the
- * `<dnug-datagrid>` in the main content area.
+ * list", "Customer append", "Customer reset", "All customers", and
+ * "Streaming customers" that drive the `<dnug-datagrid>` in the main content
+ * area.
  *
  * @module menuItems
  */
@@ -47,8 +48,10 @@ const wireClickHandler = (elementId: string, handler = () => console.warn(`No-op
  * `#apilist` → {@link apiListEventHandler}, `#userinfo` →
  * {@link userInfoEventHandler}, `#clickonly` → the default no-op (logs a
  * warning), `#customerlist` → {@link customerListEventHandler},
- * `#customerreset` → {@link customerResetEventHandler}, and `#customerappend`
- * → {@link customerAppendEventHandler}. Each binding is made via
+ * `#customerreset` → {@link customerResetEventHandler}, `#customerappend`
+ * → {@link customerAppendEventHandler}, `#allcustomers` →
+ * {@link allCustomersEventHandler}, and `#streamingcustomers` →
+ * {@link streamingCustomersEventHandler}. Each binding is made via
  * {@link wireClickHandler}; a menu element that is absent from the DOM is
  * skipped with an error logged to the console.
  *
@@ -65,6 +68,16 @@ export const wireUpMainMenu = () => {
   wireClickHandler('streamingcustomers', streamingCustomersEventHandler);
 };
 
+/**
+ * Event handler for the "Streaming customers" menu item. Finds the existing
+ * `<dnug-datagrid>` in the main content area, or creates and inserts one if
+ * none exists yet, and then delegates to
+ * {@link import('../customerdata').streamCustomers} to stream the full
+ * customer list row-by-row into the grid as the rows arrive. Any rejection
+ * from `streamCustomers` propagates to the caller.
+ *
+ * @returns A promise that resolves when streaming is complete.
+ */
 const streamingCustomersEventHandler = async () => {
   console.log('Streaming customers clicked');
   let clist = document.querySelector('dnug-datagrid') as DnugDatagrid | null;
@@ -78,6 +91,16 @@ const streamingCustomersEventHandler = async () => {
   await streamCustomers(clist);
 };
 
+/**
+ * Event handler for the "All customers" menu item. Fetches a single large
+ * page of customer data (`fetchCustomers(10000)`) and appends the resulting
+ * rows to the datagrid via {@link DnugDatagrid.addRows}, logging the elapsed
+ * fetch time. The datagrid is found in the main content area or created and
+ * inserted if none exists yet. A non-array response body or a fetch error is
+ * logged and rendered as an error message instead of being appended.
+ *
+ * @returns A promise that resolves when the operation is complete.
+ */
 const allCustomersEventHandler = async () => {
   console.log('All customers clicked');
   // ensure the datagrid is present

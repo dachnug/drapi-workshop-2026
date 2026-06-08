@@ -1,0 +1,62 @@
+info:
+  name: Make a view
+  type: http
+  seq: 3
+
+http:
+  method: PUT
+  url: "{{HOST}}/api/setup-v1/design/views/StuffList?nsfPath={{NSFPATH}}"
+  headers:
+    - name: Authorization
+      value: Bearer {{BEARER}}
+  params:
+    - name: nsfPath
+      value: "{{NSFPATH}}"
+      type: query
+  body:
+    type: json
+    data: |-
+      {
+        "columns": [
+          {
+            "formula": "color",
+            "name": "color",
+            "sort": "ascending",
+            "title": "color"
+          },
+          {
+            "formula": "taste",
+            "name": "taste",
+            "sort": "ascending",
+            "title": "taste"
+          },
+          {
+            "formula": "shape",
+            "name": "shape",
+            "title": "shape"
+          }
+        ],
+        "name": "StuffList",
+        "selectionFormula": "Form = \"Stuff\""
+      }
+  auth: inherit
+
+runtime:
+  assertions:
+    - expression: res.status
+      operator: eq
+      value: "200"
+    - expression: res.body
+      operator: isJson
+    - expression: res.body.success
+      operator: eq
+      value: "true"
+    - expression: res.body.type
+      operator: eq
+      value: view
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
