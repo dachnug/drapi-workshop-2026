@@ -4,6 +4,8 @@
 
 ## Dealing with large data
 
+### Conventional Wisdom
+
 Never fetch everything. Page through it.
 
 ```bash
@@ -13,3 +15,19 @@ curl "https://YOUR-HOST/api/v1/lists/products\
 ```
 
 Why: payload size, server load, perceived speed. <!-- .element: style="color:var(--muted)" -->
+
+--
+
+### Contrarian take
+
+Everything is a stream
+
+<p class="demo-slot"><b>DEMO SLOT:</b>load vs page vs stream</p>
+
+```typescript
+await response.body
+  .pipeThrough(new TextDecoderStream())
+  .pipeThrough(splitStream())
+  .pipeThrough(parseJSON())
+  .pipeTo(writeToControl(uiControl, Date.now()));
+```

@@ -1,0 +1,95 @@
+/*
+ * (C) 2026 HCL for DNUG, Apache 2.0 license
+ */
+
+wa-page {
+  --menu-width: 15rem;
+  --aside-width: 15rem;
+}
+wa-page[view='desktop'] {
+  [slot*='navigation'] {
+    border-inline-end: var(--wa-border-width-s) var(--wa-border-style) var(--wa-color-surface-border);
+  }
+}
+wa-page[view='mobile'] {
+  --menu-width: auto;
+  --aside-width: auto;
+}
+
+[slot='banner'] {
+  --wa-color-text-link: var(--wa-color-neutral-on-loud);
+  background-color: var(--wa-color-neutral-fill-loud);
+}
+[slot='header'] {
+  --wa-link-decoration-default: none;
+  border-block-end: var(--wa-border-width-s) var(--wa-border-style) var(--wa-color-surface-border);
+}
+[slot*='header'] a {
+  font-weight: var(--wa-font-weight-action);
+}
+[slot='subheader'] {
+  background-color: var(--wa-color-surface-lowered);
+  border-block-end: var(--wa-border-width-s) var(--wa-border-style) var(--wa-color-surface-border);
+}
+[slot='navigation-header'] {
+  border-block-end: var(--wa-border-width-s) var(--wa-border-style) var(--wa-color-surface-border);
+}
+
+[slot*='navigation'] a {
+  --wa-color-text-link: var(--wa-color-text-normal);
+}
+[slot='navigation-footer'] {
+  width: 100%;
+  border-block-start: var(--wa-border-width-s) var(--wa-border-style) var(--wa-color-surface-border);
+
+  .wa-flank {
+    --flank-size: 1.25em;
+  }
+}
+[slot='main-header'],
+main,
+[slot='main-footer'] {
+  max-inline-size: 60rem;
+  margin-inline: auto;
+}
+[slot='main-footer'] {
+  border-block-start: var(--wa-border-width-s) var(--wa-border-style) var(--wa-color-surface-border);
+}
+[slot='footer'] {
+  --wa-color-text-link: var(--wa-color-text-quiet);
+  background-color: var(--wa-color-surface-lowered);
+  font-size: var(--wa-font-size-s);
+}
+
+#dachnug-header {
+  font-size: var(--wa-font-size-2xl);
+  color: var(--wa-color-brand-default);
+}
+
+#mainmenu li {
+  list-style: none;
+  cursor: pointer;
+  border-radius: var(--wa-border-radius-s);
+  padding: 0.25em 0.5em;
+  margin: 0.25em;
+  border-width: var(--wa-border-width-s);
+  border-style: var(--wa-border-style);
+  border-color: var(--wa-color-surface-border);
+  background-color: var(--wa-color-surface-lowered);
+  color: var(--wa-color-text-normal);
+}
+
+#mainmenu li:hover {
+  background-color: var(--wa-color-surface-raised);
+}
+
+pre {
+  background-color: var(--wa-color-surface-lowered);
+  width: 100%;
+  padding: 1em;
+  border-radius: var(--wa-border-radius-s);
+  overflow-x: auto;
+  color: var(--wa-color-text-normal);
+  border: var(--wa-border-width-s) var(--wa-border-style) var(--wa-color-surface-border);
+  margin: 1em;
+}
