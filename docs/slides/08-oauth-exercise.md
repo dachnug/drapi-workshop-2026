@@ -1,6 +1,6 @@
 <span class="timing">14:55 – 15:25 · <span class="type-ex">Exercise</span></span>
 
-<p class="eyebrow">Block 7 · hands-on</p>
+<p class="eyebrow"> hands-on</p>
 
 ## Implement OAuth
 

@@ -13,12 +13,24 @@
 
 import '@awesome.me/webawesome/dist/styles/webawesome.css';
 import '@awesome.me/webawesome/dist/styles/themes/default.css';
-
 import '@awesome.me/webawesome/dist/components/page/page.js';
+
 import './components/dnug-actionbar';
 import './components/dnug-login';
 import './components/dnug-datagrid';
 import { wireUpMainMenu } from './menuItems';
+import { tokenFromCode } from './oidcauth';
+
+const checkForOidcRedirect = async () => {
+  const params = new URLSearchParams(globalThis.location.search);
+  const code = params.get('code');
+  const token_endpoint = globalThis.localStorage.getItem('token_endpoint') ?? '/oauth/token';
+  const redirectUri = globalThis.location.origin + '/';
+  if (code) {
+    const token = await tokenFromCode(code, token_endpoint, redirectUri);
+    console.log('Received token from OIDC redirect:', token);
+  }
+};
 
 /**
  * Bootstraps the application: attaches the main-menu event handlers and logs
@@ -26,6 +38,7 @@ import { wireUpMainMenu } from './menuItems';
  */
 const startApplication = () => {
   wireUpMainMenu();
+  checkForOidcRedirect();
   console.log('Application initialized');
 };
 

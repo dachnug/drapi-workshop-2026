@@ -9,6 +9,16 @@ const apiProxy = {
     target: 'https://keep.dnug.rocks:8880',
     changeOrigin: true,
     secure: true
+  },
+  '/oauth': {
+    target: 'https://keep.dnug.rocks:8880',
+    changeOrigin: true,
+    secure: true
+  },
+  '/.well-known': {
+    target: 'https://keep.dnug.rocks:8880',
+    changeOrigin: true,
+    secure: true
   }
 };
 

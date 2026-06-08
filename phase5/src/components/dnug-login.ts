@@ -20,6 +20,8 @@ import { customElement, query } from 'lit/decorators.js';
 import { loginBasic } from '../auth';
 
 import type WaDialog from '@awesome.me/webawesome/dist/components/dialog/dialog.js';
+import { OIDC_DISCOVERY_URL } from '../constants';
+import { oidcLogin } from '../oidcauth';
 
 /**
  * Modal login dialog component.
@@ -84,6 +86,11 @@ export class DnugLogin extends LitElement {
     }
   }
 
+  private async onOidcLogin() {
+    const redirectURI = globalThis.location.href;
+    globalThis.location.href = await oidcLogin(OIDC_DISCOVERY_URL, redirectURI);
+  }
+
   /**
    * Renders the login dialog containing the username/password form and an
    * inline message area for errors.
@@ -105,6 +112,7 @@ export class DnugLogin extends LitElement {
           <wa-button slot="footer" type="submit" variant="brand">Login</wa-button>
           <p slot="footer">${this.msg}</p>
         </form>
+        <wa-button slot="footer" @click=${this.onOidcLogin}>login with OIDC</wa-button>
       </wa-dialog>
     `;
   }

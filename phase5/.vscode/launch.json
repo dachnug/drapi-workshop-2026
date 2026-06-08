@@ -6,6 +6,7 @@
   "configurations": [
     {
       "name": "Attach to Chrome",
+      // start Chrome with: google-chrome --remote-debugging-port=9222
       "port": 9222,
       "request": "attach",
       "type": "chrome",

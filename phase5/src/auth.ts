@@ -13,6 +13,7 @@
  * @module auth
  */
 
+import { OIDC_CLIENT_ID } from './constants';
 import { replaceMainContent } from './utils';
 
 /**
@@ -156,15 +157,20 @@ const resolveUsernameFromClaims = (claims: Record<string, unknown>): string => {
  * @param json - The parsed JSON body of the auth response.
  * @throws {Error} If the response does not contain a `bearer` token.
  */
-const extractCredentials = (json: any) => {
-  if (json.bearer) {
-    const bearer = json.bearer;
+export const extractCredentials = (json: any) => {
+  if (json.bearer || json.access_token) {
+    const bearer = json.bearer || json.access_token;
     const claims = parseJwtClaims(bearer);
     const username = resolveUsernameFromClaims(claims);
 
     globalThis.localStorage.setItem('authToken', bearer);
     globalThis.localStorage.setItem('username', username);
     globalThis.localStorage.setItem('claims', JSON.stringify(claims));
+
+    if (json.refresh_token) {
+      globalThis.localStorage.setItem('refreshToken', json.refresh_token);
+    }
+
     emitAuthChanged();
 
     console.log('Login successful, received bearer token');
@@ -219,14 +225,9 @@ export const logout = async (): Promise<boolean> => {
   globalThis.localStorage.removeItem('authToken');
   globalThis.localStorage.removeItem('username');
   globalThis.localStorage.removeItem('claims');
+  globalThis.localStorage.removeItem('refreshToken');
   emitAuthChanged();
-
-  const icon = document.createElement('wa-icon');
-  icon.setAttribute('name', 'rainbow');
-  icon.setAttribute('label', 'time to relax');
-  icon.setAttribute('style', 'font-size: 254px; color: green');
-  icon.classList.add('wa-font-size-xxl');
-  replaceMainContent(icon);
+  globalThis.location.href = '/';
 
   if (token) {
     const response = await fetch('/api/v1/auth/logout', {
@@ -237,13 +238,13 @@ export const logout = async (): Promise<boolean> => {
       },
       body: '{"logout": "Yes"}'
     })
-      .then((response) => {
+      .then(async (response) => {
         if (!response.ok) {
           const msg = `Logout request failed: ${response.status} ${response.statusText}`;
           console.error(msg);
           throw new Error(msg);
         }
-        return response.text();
+        return await response.text();
       })
       .then((_text) => true)
       .catch((error) => {
@@ -253,8 +254,8 @@ export const logout = async (): Promise<boolean> => {
     return response;
   } else {
     console.warn('No auth token found during logout');
-    return true;
   }
+  return true;
 };
 
 /**
@@ -352,6 +353,15 @@ const getOrFetchToken = async (reprompt: boolean): Promise<string | null> => {
     return globalThis.localStorage.getItem('authToken');
   }
 
+  const refreshToken = globalThis.localStorage.getItem('refreshToken');
+  if (refreshToken) {
+    // Attempt to refresh the token
+    const token = await attemptTokenRefresh(refreshToken);
+    if (token) {
+      return token;
+    }
+  }
+
   if (reprompt) {
     const success = await promptLogin();
     if (success) {
@@ -359,4 +369,32 @@ const getOrFetchToken = async (reprompt: boolean): Promise<string | null> => {
     }
   }
   throw new Error('Authentication required');
+};
+
+const attemptTokenRefresh = async (refreshToken: string): Promise<string> => {
+  try {
+    const token_endpoint = globalThis.localStorage.getItem('token_endpoint') ?? '/oauth/token';
+    const response = await fetch(token_endpoint, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded'
+      },
+      body: new URLSearchParams({
+        grant_type: 'refresh_token',
+        client_id: OIDC_CLIENT_ID,
+        refresh_token: refreshToken
+      })
+    });
+    if (response.ok) {
+      const json = await response.json();
+      extractCredentials(json);
+      return globalThis.localStorage.getItem('authToken') ?? '';
+    } else {
+      throw new Error(`Token refresh failed: ${response.status} ${response.statusText}`);
+    }
+  } catch (err) {
+    console.error('Token refresh error:', err);
+    globalThis.localStorage.removeItem('refreshToken');
+    throw err;
+  }
 };
