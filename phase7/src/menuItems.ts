@@ -66,6 +66,7 @@ export const wireUpMainMenu = () => {
   wireClickHandler('customerappend', customerAppendEventHandler);
   wireClickHandler('allcustomers', allCustomersEventHandler);
   wireClickHandler('streamingcustomers', streamingCustomersEventHandler);
+  wireClickHandler('hardware', hardwareEventHandler); // placeholder for future hardware demo
 };
 
 /**
@@ -89,6 +90,48 @@ const streamingCustomersEventHandler = async () => {
 
   // now start the timer and fetch all customers via streaming
   await streamCustomers(clist);
+};
+
+const hardwareEventHandler = async () => {
+  console.log('Hardware demo clicked');
+  const options = {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      forms: ['equipment'],
+      query: '@All',
+      viewRefresh: true,
+      noViews: false
+    })
+  };
+  const data = (await keepFetch('/api/v1/query?dataSource=approvals&action=execute', options)) as Array<any>;
+  const transformed = data.flatMap(
+    (entry) => Object.values(entry.items ?? {}) as Array<{ Equipment?: string; Cost?: number }>
+  );
+  const reduced = transformed.reduce(
+    (accumulator, element) => reduceHardware(accumulator, element),
+    {} as Record<string, { total: number; count: number }>
+  );
+  const pre = document.createElement('pre');
+  pre.textContent = JSON.stringify(reduced, null, 2);
+  replaceMainContent(pre);
+};
+
+const reduceHardware = (result: Record<string, { total: number; count: number }>, data: { Equipment?: string; Cost?: number }) => {
+  if (!data || typeof data.Equipment !== 'string' || data.Equipment.length === 0) {
+    return result;
+  }
+
+  const equipment = data.Equipment;
+  const numericCost = typeof data.Cost === 'number' && Number.isFinite(data.Cost) ? data.Cost : 0;
+
+  if (!result[equipment]) {
+    result[equipment] = { total: 0, count: 0 };
+  }
+
+  result[equipment].total += numericCost;
+  result[equipment].count += 1;
+  return result;
 };
 
 /**

@@ -1,6 +1,14 @@
 <span class="timing stretch">17:05 – 17:20 · <span class="type-demo">Demo</span></span>
 
-<p class="eyebrow">Block 12</p>
+## Deployment: vite
+
+```bash
+npm run build
+```
+
+then copy `dist`
+
+--
 
 ## Deployment: `manifest.json`
 
@@ -8,10 +16,14 @@ What gets exposed, and how.
 
 ```json
 {
-  "name": "demo",
-  "schemas": ["customers", "products"],
-  "openapi": true
+  "short_name": "Some name",
+  "name": "a SPA to relax",
+  "start_url": ".",
+  "theme_color": "#000000",
+  "background_color": "#aacccc",
+  "icon": "logo.png",
+  "csp": "default-src 'self'; img-src 'self' data:; report-uri /api/csp-violation-report; connect-src 'self' https://somewhere.else; font-src 'all';"
 }
 ```
 
-⏱ Stretch - if behind, demo only (~5 min) and link to docs. <!-- .element: style="color:var(--muted)" -->
+## CSP use a generator: https://report-uri.com/home/generate

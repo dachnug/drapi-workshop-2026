@@ -2,15 +2,45 @@
 
 <p class="eyebrow">Block 10</p>
 
-## Multi-value fields
-
-JSON arrays vs Notes multi-value items - a real gotcha for this audience.
+## Multi-value fields Notes
 
 ```json
 {
-  "Categories": ["Hardware", "Networking", "Clearance"],
-  "AltPhones": ["+63 2 1234", "+63 917 5678"]
+  "Equipment": ["acBook Pro M2", "Pencil"],
+  "Cost": [3267.0, 1.2],
+  "Comments": ["silver", "B Type"]
 }
 ```
 
-Single value vs array: what DRAPI returns, and how to write it back. <!-- .element: style="color:var(--muted)" -->
+## Multi-value fields in DRAPI
+
+```json
+{
+      "0": {
+        "Comments": "silver",
+        "Cost": 3267.0,
+        "Equipment": "MacBook Pro M2"
+      },
+      "1": {
+        "Comments": "HB Type",
+        "Cost": 1.2,
+        "Equipment": "Pencil"
+      }
+    }
+}
+```
+
+--
+
+## .map / .flatMap
+
+```typescript
+data.flatMap((entry) => Object.values(entry.items ?? {}));
+```
+
+## .reduce
+
+```typescript
+const initial = {};
+transformed.reduce((accumulator, element) => reduceHardware(accumulator, element), initial);
+```
